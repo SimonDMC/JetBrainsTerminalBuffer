@@ -2,6 +2,7 @@ package com.simondmc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CharacterCell {
@@ -9,7 +10,7 @@ public class CharacterCell {
     private static final int ITALIC_TERMINAL_CODE = 3;
     private static final int UNDERLINE_TERMINAL_CODE = 4;
 
-    private final char content;
+    private final Optional<Character> content;
     private final TerminalColor foregroundColor;
     private final TerminalColor backgroundColor;
     private final boolean bold;
@@ -29,8 +30,12 @@ public class CharacterCell {
         this.underline = builder.underline;
     }
 
+    public Optional<Character> getRawCharacter() {
+        return content;
+    }
+
     /**
-     * Get character cell as a formatted string
+     * Gets character cell as a formatted string
      *
      * @return formatted string
      */
@@ -59,7 +64,7 @@ public class CharacterCell {
 
         if (modifiers.isEmpty()) {
             // if there are no modifiers, return character directly
-            return String.valueOf(content);
+            return String.valueOf(content.orElse(' '));
         } else {
             // if there are modifiers, wrap the character in formatting code and reset
             String joinedModifiers = modifiers.stream().map(Object::toString)
@@ -67,12 +72,12 @@ public class CharacterCell {
             String formattingCode = "\u001B[" + joinedModifiers + "m";
             String resetCode = "\u001B[0m";
 
-            return formattingCode + content + resetCode;
+            return formattingCode + content.orElse(' ') + resetCode;
         }
     }
 
     public static class Builder {
-        private char content = ' ';
+        private Optional<Character> content = Optional.empty();
         private TerminalColor foregroundColor = TerminalColor.NONE;
         private TerminalColor backgroundColor = TerminalColor.NONE;
         private boolean bold = false;
@@ -80,7 +85,7 @@ public class CharacterCell {
         private boolean underline = false;
 
         public Builder content(Character content) {
-            this.content = content;
+            this.content = Optional.of(content);
             return this;
         }
 

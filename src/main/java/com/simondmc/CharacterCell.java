@@ -34,6 +34,26 @@ public class CharacterCell {
         return content;
     }
 
+    public TerminalColor getForegroundColor() {
+        return foregroundColor;
+    }
+
+    public TerminalColor getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public boolean isBold() {
+        return bold;
+    }
+
+    public boolean isItalic() {
+        return italic;
+    }
+
+    public boolean isUnderline() {
+        return underline;
+    }
+
     /**
      * Gets character cell as a formatted string
      *

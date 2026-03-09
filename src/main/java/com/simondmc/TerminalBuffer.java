@@ -64,6 +64,12 @@ public class TerminalBuffer {
         }
     }
 
+    /**
+     * Move cursor in a specific direction
+     *
+     * @param direction direction to move in
+     * @param units     how many characters to move by
+     */
     public void moveCursor(CursorDirection direction, int units) {
         if (direction == CursorDirection.UP) {
             if (cursorRow >= screenHeight - units) {
@@ -98,20 +104,40 @@ public class TerminalBuffer {
         }
     }
 
+    public TerminalColor getForegroundColor() {
+        return foregroundColor;
+    }
+
     public void setForegroundColor(TerminalColor foregroundColor) {
         this.foregroundColor = foregroundColor;
+    }
+
+    public TerminalColor getBackgroundColor() {
+        return backgroundColor;
     }
 
     public void setBackgroundColor(TerminalColor backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
+    public boolean isBold() {
+        return bold;
+    }
+
     public void setBold(boolean bold) {
         this.bold = bold;
     }
 
+    public boolean isItalic() {
+        return italic;
+    }
+
     public void setItalic(boolean italic) {
         this.italic = italic;
+    }
+
+    public boolean isUnderline() {
+        return underline;
     }
 
     public void setUnderline(boolean underline) {

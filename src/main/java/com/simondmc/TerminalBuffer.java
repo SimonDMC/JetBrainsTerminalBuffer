@@ -62,6 +62,8 @@ public class TerminalBuffer {
         if (cursorCol < 0 || cursorCol >= screenWidth) {
             throw new IllegalArgumentException("Cannot move cursor out of bounds");
         }
+
+        this.cursorCol = cursorCol;
     }
 
     /**

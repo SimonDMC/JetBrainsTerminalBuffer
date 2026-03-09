@@ -20,11 +20,11 @@ public class TerminalBuffer {
     private int cursorRow;
     private int cursorCol;
 
-    private TerminalColor foregroundColor;
-    private TerminalColor backgroundColor;
-    private boolean bold;
-    private boolean italic;
-    private boolean underline;
+    private TerminalColor foregroundColor = TerminalColor.NONE;
+    private TerminalColor backgroundColor = TerminalColor.NONE;
+    private boolean bold = false;
+    private boolean italic = false;
+    private boolean underline = false;
 
     public TerminalBuffer(int screenWidth, int screenHeight, int scrollbackHeight) {
         this.screenWidth = screenWidth;
@@ -86,7 +86,7 @@ public class TerminalBuffer {
                 throw new IllegalArgumentException("Cannot move cursor out of bounds");
             }
 
-            cursorCol += units;
+            cursorCol -= units;
         }
 
         if (direction == CursorDirection.RIGHT) {
@@ -94,7 +94,7 @@ public class TerminalBuffer {
                 throw new IllegalArgumentException("Cannot move cursor out of bounds");
             }
 
-            cursorCol -= units;
+            cursorCol += units;
         }
     }
 
@@ -158,6 +158,20 @@ public class TerminalBuffer {
      */
     public void fillLine(CharacterCell character) {
         Arrays.fill(lines.get(cursorRow), character);
+    }
+
+    /**
+     * Fills the whole screen with a character
+     *
+     * @param character character to fill with
+     */
+    public void fillScreen(CharacterCell character) {
+        for (int i = 0; i < screenHeight; i++) {
+            CharacterCell[] emptyLine = new CharacterCell[screenWidth];
+            Arrays.fill(emptyLine, character);
+            lines.addFirst(emptyLine);
+            lines.removeLast();
+        }
     }
 
     /**

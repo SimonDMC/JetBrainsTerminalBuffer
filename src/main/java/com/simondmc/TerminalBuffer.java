@@ -122,13 +122,8 @@ public class TerminalBuffer {
      * Writes the given text at cursor position with selected attributes
      *
      * @param text text to write
-     * @throws IllegalArgumentException if text would overflow current line
      */
     public void writeText(String text) {
-        if (cursorCol >= screenWidth - text.length()) {
-            throw new IllegalArgumentException("Text doesn't fit on current line");
-        }
-
         for (int i = 0; i < text.length(); i++) {
             char rawCharacter = text.charAt(i);
             CharacterCell formattedCharacter = new CharacterCell.Builder()
@@ -141,6 +136,60 @@ public class TerminalBuffer {
                     .build();
             lines.get(cursorRow)[cursorCol] = formattedCharacter;
             cursorCol++;
+            // wrap, if necessary
+            if (cursorCol == screenWidth) {
+                // we're indexing from bottom left, so going down is -1
+                cursorRow--;
+                cursorCol = 0;
+
+                // if we're wrapping from the last line, create a new one
+                if (cursorRow == -1) {
+                    cursorRow = 0;
+                    insertLine();
+                }
+            }
+        }
+    }
+
+    /**
+     * Inserts the given text at cursor position with selected attributes, pushing the following text to the right.
+     * Note: This is a lossy operation, characters pushed to the right get discarded.
+     *
+     * @param text text to write
+     */
+    public void insertText(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            char rawCharacter = text.charAt(i);
+            CharacterCell formattedCharacter = new CharacterCell.Builder()
+                    .content(rawCharacter)
+                    .foregroundColor(foregroundColor)
+                    .backgroundColor(backgroundColor)
+                    .bold(bold)
+                    .italic(italic)
+                    .underline(underline)
+                    .build();
+
+            // this is pretty inefficient, as we're moving the whole line every character.
+            // in a real application we could just override the characters until the last line and then
+            // move them once by the desired amount.
+            for (int j = screenWidth - 2; j >= cursorCol; j--) {
+                lines.get(cursorRow)[j + 1] = lines.get(cursorRow)[j];
+            }
+            lines.get(cursorRow)[cursorCol] = formattedCharacter;
+
+            cursorCol++;
+            // wrap, if necessary
+            if (cursorCol == screenWidth) {
+                // we're indexing from bottom left, so going down is -1
+                cursorRow--;
+                cursorCol = 0;
+
+                // if we're wrapping from the last line, create a new one
+                if (cursorRow == -1) {
+                    cursorRow = 0;
+                    insertLine();
+                }
+            }
         }
     }
 

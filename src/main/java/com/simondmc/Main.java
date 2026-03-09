@@ -12,12 +12,15 @@ public class Main {
         terminal.moveCursor(CursorDirection.UP, 2);
         terminal.moveCursor(CursorDirection.RIGHT, 3);
 
-        // Write text
+        // Write some text
         terminal.setForegroundColor(TerminalColor.GREEN);
         terminal.setBackgroundColor(TerminalColor.BLACK);
-        terminal.writeText("Hello, ");
+        terminal.writeText("Hello!");
+
+        // Insert some text
+        terminal.moveCursor(CursorDirection.LEFT, 1);
         terminal.setBold(true);
-        terminal.writeText("World!");
+        terminal.insertText(", World");
 
         // Print the screen
         System.out.println(terminal.getScreen());
